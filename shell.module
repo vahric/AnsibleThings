@@ -1,0 +1,15 @@
+-i indicate our inventory file
+credentals are under groups directory and nfsserver section
+-m module name we would like to use
+-a execute shell commands inside ' '
+ip address or alias or group name to run command on 
+
+
+
+[root@ansible ~]# ansible -i nfs -m shell -a 'free -m' 10.111.63.3
+10.111.63.3 | SUCCESS | rc=0 >>
+              total        used        free      shared  buff/cache   available
+Mem:           1839          95        1597           8         145        1585
+Swap:          2047           0        2047
+
+
