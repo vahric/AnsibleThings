@@ -2,7 +2,6 @@ Update System
 
 yum update -y
 
-
 Install Extra Packages For Enterprise Linux
 
 yum install epel-release -y

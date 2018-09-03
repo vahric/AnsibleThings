@@ -1,8 +1,0 @@
-- name: Router Things
-  hosts: routers
-  gather_facts: false
-
-  tasks:
-    - name: show ver
-      ios_command:
-        command: show version

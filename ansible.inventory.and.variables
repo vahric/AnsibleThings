@@ -1,0 +1,72 @@
+Default Host File
+
+/etc/ansible/hosts
+
+Customer Host File(Create any file name you want)
+
+ansible-playbook -i customer/host.file
+
+INI Based Host File Examples(this file could be yaml too !)
+
+# This is ungrouped
+mail.doruk.net.tr
+
+# This is grouped
+[hostingservers]
+web1.dorukcloud.com
+
+[bigdata]
+ambarihadoop[01:02].dorukcloud.com
+
+#Setting Variable to use it with ansible
+[mtas]
+mta01.dorukcloud.com	port=25
+
+Or give an alias and set ip of each
+
+[mailservers]
+mail1	ansible_ssh_host=x.x.y.y
+mail2	ansible_ssh_host=t.t.r.r
+
+Nasted Groups
+
+[ServerGroup1:childeren]
+bigdata
+hostingservers
+
+#Group based vars
+[ServerGroup1:vars]
+port=25
+ntp_server=tr.time.doruk.net
+timeout=300
+
+Also ansible have implicit two groups which are hidden to us
+one is "all"
+other is "ungrouped"
+  
+Best practice, such variables should be stored under host_vars and group_vars, create such directories and use group and host names as a file
+This files should be yml files not ini based , shoud start "---" and append key and value based with : delimated
+
+Create a director name host_vars
+  
+mkdir host_vars
+
+Create a file with same name of host alias in inventory
+
+touch host_vars/host1
+
+Create a director name group_vars
+
+mkdir group_vars
+
+Create a file with same name of group in inventory
+
+touch group_vars/nfsserver
+
+---
+ansible_ssh_user: zoot123
+ansible_ssh_pass: xyz123
+
+To set global configs for all create file named all and put global variables there
+
+touch group_vars/all
