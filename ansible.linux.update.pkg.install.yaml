@@ -1,23 +1,26 @@
+---
 
+- name: Update and Install Some Packages
 
-- name: Update All Linux Pkg Latest
-  yum:
-    name: '*'
-    # Latest son versionu anlamına geliyor, present derken illa son version'u kurmuş olmayabilirsiniz.
-    state: latest
+  tasks:
+  - name: Update All Linux Pkg Latest
+    yum:
+      name: '*'
+      # Latest son versionu anlamına geliyor, present derken illa son version'u kurmuş olmayabilirsiniz.
+      state: latest
   
-- name: Install or Sure Wget Installed 
-  yum:
-    name: wget
-    state : installed
-    # Çokca present kullanılıyor farklılık olsun diye 'installed kullandım'
+  - name: Install or Sure Wget Installed 
+    yum:
+      name: wget
+      state : installed
+      # Çokca present kullanılıyor farklılık olsun diye 'installed kullandım'
 
-- name: Install Chrony kind a NTP Implamentation
-  yum:
-    name: chrony
-    state: installed
+  - name: Install Chrony kind a NTP Implamentation
+    yum:
+      name: chrony
+      state: installed
 
-- name: Install rpm from local or via web
-  yum:
-    name: <path/of/your/rpm or http way of .rpm file>
+  - name: Install rpm from local or via web
+    yum:
+      name: <path/of/your/rpm or http way of .rpm file>
 
