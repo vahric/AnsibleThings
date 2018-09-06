@@ -7,13 +7,13 @@
   tasks:
   - name: Enable Service For Startup
     service:
-      name: chrony
+      name: chronyd
       enabled: yes
       # enabled no for disable service 
 
   - name: Start Service
     service:
-      name: chrony
+      name: chronyd
       state: started
       # use stopped to stop service  
 
