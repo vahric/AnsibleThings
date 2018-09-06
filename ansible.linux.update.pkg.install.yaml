@@ -2,6 +2,7 @@
 
 - name: Update and Install Some Packages
   hosts: hadoopservers
+  gather_facts: false
 
   tasks:
   - name: Update All Linux Pkg Latest
