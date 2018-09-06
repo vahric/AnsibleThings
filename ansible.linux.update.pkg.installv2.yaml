@@ -1,0 +1,21 @@
+
+
+- name: Update Linux
+  
+- name: Install Multiple Packages Same Time Installed (Array Fashion) 
+  yum:
+    name: '{{ pkgs }}'
+    # {{''}} python'dan, flask'dan dışardan variable almak için kullanılır burada pkgs diye bir array değişkenini
+    # temsil ediyor. 
+    state : installed
+  vars:
+    pkgs:
+    - wget
+    - chrony
+
+
+- name: Update All Linux Pkg Afterall 'Latest'
+  yum:
+    name: '*'
+    # Latest son versionu anlamına geliyor, present derken illa son version'u kurmuş olmayabilirsiniz.
+    state: latest
