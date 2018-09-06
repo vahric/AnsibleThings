@@ -1,0 +1,4 @@
+
+Yaml files always start --- , put it first line of your each yaml file
+Yaml consist two part, hosts and tasks part.
+When you start to write our yaml file first describe hosts,facts and then unders tasks step by step provide thinks to do

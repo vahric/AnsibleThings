@@ -1,14 +1,21 @@
-- name: Enable Service For Startup
-  service:
-    name: chrony
-    enabled: yes
-    # enabled no for disable service 
+---
 
-- name: Start Service
-  service:
-    name: chrony
-    state: started
-    # use stopped to stop service  
+- name: Enable disable or provider autmatic service start when OS reboot
+  hosts: hadoopservers
+  gather_facts: false
+
+  tasks:
+  - name: Enable Service For Startup
+    service:
+      name: chrony
+      enabled: yes
+      # enabled no for disable service 
+
+  - name: Start Service
+    service:
+      name: chrony
+      state: started
+      # use stopped to stop service  
 
 #Links
 #https://docs.ansible.com/ansible/latest/modules/service_module.html
