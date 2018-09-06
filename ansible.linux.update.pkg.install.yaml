@@ -1,6 +1,7 @@
 ---
 
 - name: Update and Install Some Packages
+  hosts: hadoopservers
 
   tasks:
   - name: Update All Linux Pkg Latest
