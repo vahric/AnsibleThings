@@ -22,3 +22,8 @@
     yum:
       name: chrony
       state: installed
+
+  - name: Install rpm from local or via web
+    yum:
+      name: <path/of/your/rpm or http way of .rpm file>
+

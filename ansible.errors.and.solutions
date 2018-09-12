@@ -1,12 +1,26 @@
+********
+*ERRORS*
+********
 
 Error 1 : 
 
 fatal: [ambarihadoop06.dorukcloud.com]: FAILED! => {"msg": "Using a SSH password instead of a key is not possible because Host Key checking is enabled and sshpass does not support this.  Please add this host's fingerprint to your known_hosts file to manage this host."}
 
-Solution 1 : 
+To Solve 1 : 
 
 Modify /etc/ansible/ansible.cfg  file with below 
 
 # uncomment this to disable SSH key host checking
 host_key_checking = False
 
+***********
+*SOLUTIONS*
+***********
+
+Question 1 : 
+
+	How to run ansible tasks parallel
+
+Solution 1 : 
+
+	To hosts section add "strategy: free" k/v.
