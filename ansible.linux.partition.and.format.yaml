@@ -1,0 +1,79 @@
+---
+
+- name: Partition and Format Disk
+  hosts : hadoopdatanodes
+  gather_facts: false
+
+  tasks:
+    - name: Partition Disk 2
+      parted:
+        device: /dev/sdb
+        number: 1
+        state: present
+
+    - name: Partition Disk 3
+      parted:
+        device: /dev/sdc
+        number: 1
+        state: present
+
+    - name: Partition Disk 4
+      parted:
+        device: /dev/sdd
+            number: 1
+            state: present
+
+    - name: Create a ext4 filesystem on /dev/sdb1 and check disk blocks
+      filesystem:
+        fstype: ext4
+        dev: /dev/sdb1
+
+    - name: Create a ext4 filesystem on /dev/sdc1 and check disk blocks
+      filesystem:
+        fstype: ext4
+        dev: /dev/sdc1
+
+    - name: Create a ext4 filesystem on /dev/sdd1 and check disk blocks
+      filesystem:
+        fstype: ext4
+        dev: /dev/sdd1
+
+    - name: Create Mount Folders
+      shell: mkdir /mnt/sdb1
+      ignore_errors: yes
+
+    - name: Create Mount Folders
+      shell: mkdir /mnt/sdc1
+      ignore_errors: yes
+
+    - name: Create Mount Folders
+      shell: mkdir /mnt/sdd1
+      ignore_errors: yes
+
+
+    - name: Mount up device
+      mount:
+        path: /mnt/sdb1
+        src: /dev/sdb1
+        fstype: ext4
+        state: mounted
+
+    - name: Mount up device
+      mount:
+        path: /mnt/sdc1
+        src: /dev/sdc1
+        fstype: ext4
+        state: mounted
+
+    - name: Mount up device
+      mount:
+        path: /mnt/sdd1
+        src: /dev/sdd1
+        fstype: ext4
+        state: mounted
+
+
+# https://docs.ansible.com/ansible/2.6/modules/filesystem_module.html
+# https://docs.ansible.com/ansible/2.5/modules/parted_module.html
+# https://www.tecmint.com/parted-command-to-create-resize-rescue-linux-disk-partitions/
+# https://docs.ansible.com/ansible/2.6/modules/mount_module.html

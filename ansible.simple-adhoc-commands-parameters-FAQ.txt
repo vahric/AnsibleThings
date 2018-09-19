@@ -18,3 +18,7 @@ Q2) Asynchronous Actions and Polling how !
 
 A2) Use async: and poll: keys for it. With async it will wait for x sec , poll check interval.
 This async process are needed for non-blocking process need like reboot and SSH after it 
+
+Q3) How to test ansible playbook 
+
+A3) Activate Check Mode with --check paramter

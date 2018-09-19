@@ -1,0 +1,17 @@
+---
+
+- name: Add lines in to /etc/hosts file
+  hosts : k8s
+#  gather_facts: false
+
+  tasks:
+    - name: test | Build hosts file
+      lineinfile:
+        path: /etc/hosts
+        insertafter: EOF
+        line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ hostvars[item].ansible_hostname }}"
+        state: present
+# You can use like this
+#     with_items: '{{ groups["k8s"] }}'
+# Or like This
+      with_items: '{{ groups.k8s }}'
