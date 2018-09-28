@@ -1,0 +1,138 @@
+---
+
+- name: Tek bir playbook ile K8s kurulumu
+  hosts: k8s
+  gather_facts: false
+
+  tasks:
+    - name: /etc/hosts dosyasını güncelleyelim, tüm K8s master/slave node'ları birbirini çözümleyebilmeli
+      lineinfile:
+        path: /etc/hosts
+        insertafter: EOF
+        line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ hostvars[item].ansible_hostname }}"
+        state: present
+      # Kullanım şekli olarak aşağıdaki gibide set edebilirsiniz ...
+      #     with_items: '{{ groups["k8s"] }}'
+      with_items: '{{ groups.k8s }}'
+
+      #10.110.110.200 k8smaster
+      #10.110.110.201 k8sslave1
+      #10.110.110.202 k8sslave2
+      #10.110.110.203 k8sslave3
+
+    - name: İşletim sistemine ait tüm paketleri güncelleyelim ...
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Ek kuruluması gereken paketler var ise kuralım ... 
+      yum:
+        name: '{{ pkgs }}'
+        state : installed
+      vars:
+        pkgs:
+        - wget
+        - chrony
+
+    - name: Swap tanımını /etc/fstab dosyasından kaldıralım
+      mount:
+        name: swap
+        fstype: swap
+        state: absent
+
+    - name: Çalışan sistem üzerinde swap'ı kapatalım
+      command: swapoff -a
+
+    # Gerek yok çünkü sistemleri güncelleme ve kurulumlardan sonra restart edeceğiz
+    # 
+    #- name: disable SELinux
+      #command: setenforce 0
+
+    - name: SELINUX kapatalım
+      selinux:
+        state: disabled
+
+    # Docker kurulu ve servis olarak çalıştırıldığında zaten ilgili kernel
+    # parametrelerini kendisi uyguluyor olacak
+    #
+    #- name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
+     # sysctl:
+      #  name: net.bridge.bridge-nf-call-ip6tables
+       # value: 1
+        #state: present
+
+    #- name: ensure net.bridge.bridge-nf-call-iptables is set to 1
+     # sysctl:
+      #  name: net.bridge.bridge-nf-call-iptables
+       # value: 1
+        #state: present
+
+    - name: Firewalld servisini açılışta başlamaması için set edelim
+      service:
+        name: firewalld
+        enabled: no
+
+    - name: Firewalld servisini durduralım
+      service:
+        name: firewalld
+        state: stopped
+
+    - name: Kubernetes reposunu ekleyelim
+      yum_repository:
+        name: Kubernetes
+        description: Kubernetes YUM repository
+        baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+        gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+        gpgcheck: yes
+
+    - name: Docker reposunu ekleyelim
+        get_url:
+          url: https://download.docker.com/linux/centos/docker-ce.repo
+          dest: /etc/yum.repos.d/docer-ce.repo
+
+    - name: K8s için gerekli paketleri kuralım
+      yum:
+        name: '{{ pkgsk8s }}'
+        state : installed
+      vars:
+        pkgsk8s:
+        - kubelet-
+        - kubeadm-
+        - kubectl-
+
+    - name:  Açılışta Kubelet servisini aktifleştir
+      service:
+        name: kubelet
+        enabled: yes
+
+    - name: Kubelet servisini başlat
+      service:
+        name: kubelet
+        state: started
+
+    
+    - name: Install packages for Docker needs
+      yum:
+        name: '{{ pkgs }}'
+        state : installed
+      vars:
+        pkgs:
+        - yum-utils
+        - device-mapper-persistent-data
+        # Hangi version docker kuracaksanız onun listesini almak için --> yum list docker-ce --showduplicates
+        - docker-ce
+
+    - name: Açılışta Docker servisini aktifleştir
+      service:
+        name: docker
+        enabled: yes
+
+    - name: Docker servisini başlat
+      service:
+        name: docker
+        state: started
+
+
+
+
+...

@@ -1,0 +1,32 @@
+---
+
+- name: Add Docker-ce repo to nodes
+  hosts: k8s
+  strategy: free
+  gather_facts: false
+
+  tasks:
+  - name: Add repository
+    get_url:
+      url: https://download.docker.com/linux/centos/docker-ce.repo
+      dest: /etc/yum.repos.d/docer-ce.repo
+
+  - name: Install packages for Docker needs
+    yum:
+      name: '{{ pkgs }}'
+      state : installed
+    vars:
+      pkgs:
+      - yum-utils
+      - device-mapper-persistent-data
+      - docker-ce
+
+  - name: Enable Docker Service For Startup
+    service:
+      name: docker
+      enabled: yes
+
+  - name: Start Docker Service
+    service:
+      name: docker
+      state: started

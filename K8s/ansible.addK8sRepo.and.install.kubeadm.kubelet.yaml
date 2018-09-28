@@ -1,0 +1,65 @@
+---
+
+- name: Add Docker-ce,K8s repo , install Docker , kubectl , kubelet , kubeadm and Start Docker+Kubelet
+  hosts: k8s
+  strategy: free
+  gather_facts: false
+
+  tasks:
+    - name: Add repository
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docer-ce.repo
+
+    - name: Install packages for Docker needs
+      yum:
+        name: '{{ pkgsdocker }}'
+        state : installed
+      vars:
+        pkgsdocker:
+        - yum-utils
+        - device-mapper-persistent-data
+        - docker-ce
+
+    - name: add Kubernetes' YUM repository
+      yum_repository:
+        name: Kubernetes
+        description: Kubernetes YUM repository
+        baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+        gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+        gpgcheck: yes
+
+    - name: Install packages for K8s needs
+      yum:
+        name: '{{ pkgsk8s }}'
+        state : installed
+      vars:
+        pkgsk8s:
+        - kubelet
+        - kubeadm
+        - kubectl
+
+    - name: Enable Docker Service For Startup
+      service:
+        name: docker
+        enabled: yes
+
+    - name: Start Docker Service
+      service:
+        name: docker
+        state: started
+    
+    - name:  Enable Kubelet Service For Startup
+      service:
+        name: kubelet
+        enabled: yes
+
+    - name: Start Kubelet Service
+      service:
+        name: kubelet
+        state: started
+
+
+
+
+...
