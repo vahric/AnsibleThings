@@ -2,7 +2,7 @@
 
 - name: Tek bir playbook ile K8s kurulumu (Docker,Flannel,K8s)
   hosts: k8s
-  gather_facts: false
+  #gather_facts: false --> hosts dosyasını güncelleyeceğimiz için host değişkenlerine erişmemiz gerekiyor
 
   tasks:
     - name: /etc/hosts dosyasını güncelleyelim, tüm K8s master/slave node'ları birbirini çözümleyebilmeli
@@ -87,9 +87,9 @@
         gpgcheck: yes
 
     - name: Docker reposunu ekleyelim
-        get_url:
-          url: https://download.docker.com/linux/centos/docker-ce.repo
-          dest: /etc/yum.repos.d/docer-ce.repo
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docer-ce.repo
 
     - name: K8s için gerekli paketleri kuralım
       yum:
@@ -134,11 +134,7 @@
         name: docker
         state: started
 
-####
-Reboot Servers
-####
-
-- name: Reboot Servers
+- name: Reboot Server
   hosts: k8s
   strategy: free
   gather_facts: false
@@ -148,13 +144,12 @@ Reboot Servers
     shell: /sbin/shutdown -r now
     async: 1
     poll: 0
+    ignore_errors: '{{ ansible_check_mode }}'
     
   - name: waiting for serverbooting up
     wait_for_connection:
       delay: 60
       timeout: 300
-
-
-
+    ignore_errors: '{{ ansible_check_mode }}'
 
 ...
