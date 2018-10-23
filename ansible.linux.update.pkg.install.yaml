@@ -22,3 +22,13 @@
     yum:
       name: chrony
       state: installed
+
+  - name: Install git for Docker Implamentation
+    yum:
+      name: git
+      state: installed
+
+  - name: Install net-tools for Cli Debug Needs
+    yum:
+      name: net-tools
+      state: installed

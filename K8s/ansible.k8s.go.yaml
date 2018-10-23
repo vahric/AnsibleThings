@@ -1,6 +1,6 @@
 ---
 
-- name: Tek bir playbook ile K8s kurulumu (Docker,Flannel,K8s)
+- name: Tek bir playbook ile K8s kurulumu ve Gerekli Paket, Servis Ayarlamalarının Yapılması
   hosts: k8s
   #gather_facts: false --> hosts dosyasını güncelleyeceğimiz için host değişkenlerine erişmemiz gerekiyor
 
@@ -34,6 +34,7 @@
         - wget
         - chrony
         - net-tools
+        - git
 
     - name: Swap tanımını /etc/fstab dosyasından kaldıralım
       mount:
@@ -48,6 +49,9 @@
     # 
     - name: SELinux çalışıyor ise hemen durduralım
       command: setenforce 0
+      # Eğer olası kullandığınız node template'de selinux kapalı ise bu komut hata verecektir
+      # Hata verip ansible playbook durmasın diye hatayı kabullenip devam ediyoruz ...
+      ignore_errors: yes
 
     - name: SELINUX açılışta başlamaması için set edelim
       selinux:
@@ -98,9 +102,9 @@
         state : installed
       vars:
         pkgsk8s:
-        - kubelet-1.11.3-0
-        - kubeadm-1.11.3-0
-        - kubectl-1.11.3-0
+        - kubelet-1.11.3-0.x86_64
+        - kubeadm-1.11.3-0.x86_64
+        - kubectl-1.11.3-0.x86_64
 
     - name:  Açılışta Kubelet servisini aktifleştirelim
       service:
@@ -134,22 +138,18 @@
         name: docker
         state: started
 
-- name: Reboot Server
-  hosts: k8s
-  strategy: free
-  gather_facts: false
+    - name: To Reboot Server
+      shell: /sbin/shutdown -r now
+      async: 1
+      poll: 0
+      ignore_errors: yes
+      
+    - name: waiting for serverbooting up
+      wait_for_connection:
+        delay: 60
+        timeout: 300
+      ignore_errors: yes
 
-  tasks:
-  - name: To Reboot Server
-    shell: /sbin/shutdown -r now
-    async: 1
-    poll: 0
-    ignore_errors: '{{ ansible_check_mode }}'
-    
-  - name: waiting for serverbooting up
-    wait_for_connection:
-      delay: 60
-      timeout: 300
-    ignore_errors: '{{ ansible_check_mode }}'
+
 
 ...
